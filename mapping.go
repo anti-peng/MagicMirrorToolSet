@@ -34,7 +34,7 @@ const (
 
 // BCM
 const (
-	BCM0 int = iota
+	BCM0 uint8 = iota
 	BCM1
 	BCM2
 	BCM3
@@ -63,9 +63,6 @@ const (
 	BCM26
 	BCM27
 )
-
-// Clock is possible only for pins 4, 5, 6, 20, 21.
-// Pwm is possible only for pins 12, 13, 18, 19.
 
 // currentweather
 // degreeLabel: true,
