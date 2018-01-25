@@ -63,6 +63,3 @@ const (
 	BCM26
 	BCM27
 )
-
-// currentweather
-// degreeLabel: true,
