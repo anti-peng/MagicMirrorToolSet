@@ -2,6 +2,7 @@
 package main
 
 import (
+	"MagicMirrorToolSet/gpio"
 	"fmt"
 	"os"
 	"time"
@@ -17,7 +18,7 @@ func main() {
 	}
 	defer rpio.Close()
 
-	pin := rpio.Pin(GPIO21)
+	pin := rpio.Pin(gpio.GPIO21)
 	pin.Output()
 
 	for i := 0; i < 20; i++ {
