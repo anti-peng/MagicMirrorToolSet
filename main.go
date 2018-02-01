@@ -1,28 +1,29 @@
-//usr/bin/env go run $0 "$@"; exit
 package main
 
 import (
-	"MagicMirrorToolSet/gpio"
-	"fmt"
-	"os"
+	"MagicMirrorToolSet/pin"
 	"time"
 
-	rpio "github.com/stianeikeland/go-rpio"
+	"gobot.io/x/gobot"
+	"gobot.io/x/gobot/drivers/gpio"
+	"gobot.io/x/gobot/platforms/raspi"
 )
 
 func main() {
-	err := rpio.Open()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	defer rpio.Close()
+	r := raspi.NewAdaptor()
+	led := gpio.NewLedDriver(r, pin.GPIO26)
 
-	pin := rpio.Pin(gpio.GPIO21)
-	pin.Output()
-
-	for i := 0; i < 20; i++ {
-		pin.Toggle()
-		time.Sleep(time.Second / 2)
+	worker := func() {
+		gobot.Every(time.Second*1, func() {
+			led.Toggle()
+		})
 	}
+
+	robot := gobot.NewRobot(
+		"blinkBot",
+		[]gobot.Connection{r},
+		[]gobot.Device{led},
+		worker,
+	)
+	robot.Start()
 }
