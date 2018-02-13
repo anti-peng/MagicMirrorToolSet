@@ -11,37 +11,48 @@ import (
 	"gobot.io/x/gobot/platforms/raspi"
 )
 
+func now() string {
+	return time.Now().Format("2006-01-02 15:04:05")
+}
+
 func main() {
 	rpi := raspi.NewAdaptor()
 
-	sensor := gpio.NewPIRMotionDriver(rpi, pin.GPIO25, time.Second*10)
-	led := gpio.NewLedDriver(rpi, pin.GPIO26)
-	relay := gpio.NewGroveRelayDriver(rpi, pin.GPIO24)
+	// 56:12
+	// sensor := gpio.NewPIRMotionDriver(rpi, pin.GPIO20, time.Second*30)
+	sensor := gpio.NewPIRMotionDriver(rpi, pin.GPIO20)
+	relay := gpio.NewGroveRelayDriver(rpi, pin.GPIO19)
 
 	var relayBehavior = func() {
+		fmt.Println("-- relay behavior --")
 		relay.On()
-		time.Sleep(time.Second * 1)
+		time.Sleep(time.Millisecond * 100)
 		relay.Off()
 	}
 
 	work := func() {
-		sensor.On(gpio.MotionDetected, func(data interface{}) {
-			fmt.Printf("-- motion detedted: %v\n --", data)
-			led.On()
-		})
 
-		sensor.On(gpio.MotionStopped, func(data interface{}) {
-			fmt.Printf("-- motion stopped: %v\n --", data)
-			led.Off()
-			// turn off some driver after 'MotionStopped'
+		// turn off monit at start up
+		go relayBehavior()
+
+		// HC-SR501 sensor behavior
+		sensor.On(gpio.MotionDetected, func(data interface{}) {
+			fmt.Printf("-- %s - motion detedted: %v --\n", now(), data)
 			go relayBehavior()
+		})
+		sensor.On(gpio.MotionStopped, func(data interface{}) {
+			fmt.Printf("-- %s - motion stopped: %v --\n", now(), data)
+			go relayBehavior()
+		})
+		sensor.On(gpio.Error, func(err interface{}) {
+			fmt.Println(err)
 		})
 	}
 
 	robot := gobot.NewRobot(
 		"smartSwitch",
 		[]gobot.Connection{rpi},
-		[]gobot.Device{sensor, led},
+		[]gobot.Device{sensor, relay},
 		work,
 	)
 	robot.Start()
