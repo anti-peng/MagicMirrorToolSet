@@ -18,8 +18,6 @@ func now() string {
 func main() {
 	rpi := raspi.NewAdaptor()
 
-	// 56:12
-	// sensor := gpio.NewPIRMotionDriver(rpi, pin.GPIO20, time.Second*30)
 	sensor := gpio.NewPIRMotionDriver(rpi, pin.GPIO20)
 	relay := gpio.NewGroveRelayDriver(rpi, pin.GPIO19)
 
