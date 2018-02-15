@@ -22,7 +22,6 @@ func main() {
 	relay := gpio.NewGroveRelayDriver(rpi, pin.GPIO19)
 
 	var relayBehavior = func() {
-		fmt.Println("-- relay behavior --")
 		relay.On()
 		time.Sleep(time.Millisecond * 100)
 		relay.Off()

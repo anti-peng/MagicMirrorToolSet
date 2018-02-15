@@ -1,5 +1,11 @@
 package main
 
+// works with crontab
+// sudo crontab -e
+// - 0 0 * * * /home/pi/go/bin/main
+// - 0 6 * * * /home/pi/go/bin/main
+// sudo /etc/init.d/cron restart
+
 import (
 	"MagicMirrorToolSet/pin"
 	"time"
